@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float jumpForce = 30f;
     [SerializeField] int extraJumpCount = 3;
     [SerializeField] float armTiltMultiplier = 5f;
+    [SerializeField] float XPosClamp = 8f;
 
     [Header("References")]
     [SerializeField] Transform GroundCheckTransform;
@@ -48,13 +49,13 @@ public class PlayerMovement : MonoBehaviour
         Jump();
         GroundCheck();
         PlayerArmLean();
-        XPosClamper();
     }
 
     private void FixedUpdate()
     {
         Move();
         Gravity();
+        XPosClamper();
     }
 
     void Move()
@@ -120,8 +121,14 @@ public class PlayerMovement : MonoBehaviour
 
     void XPosClamper()
     {
-        Vector3 pos = rb.position;
-        pos.x = Mathf.Clamp(pos.x, -6f, 6f);
-        rb.position = pos;
+        // Project where our velocity will take us by the end of the frame.
+        Vector3 positionAtEndOfStep = rb.position + rb.velocity * Time.deltaTime;
+
+        // Limit that projected position to within our allowed bounds.
+        positionAtEndOfStep.x = Mathf.Clamp(positionAtEndOfStep.x, -XPosClamp, XPosClamp);
+
+        // Compute a velocity that will take us to this clamped position instead.
+        Vector3 neededVelocity = (positionAtEndOfStep - rb.position) / Time.deltaTime;
+        rb.velocity = neededVelocity;
     }
 }
