@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     private float animRunSpeed = 0f;
     private float gravityConstant = 9.14f;
     private float gravityScale = 1f;
-    
+
     // Detection Variables
     public bool isGrounded;
     private bool wallR = false;
@@ -63,8 +63,8 @@ public class PlayerMovement : MonoBehaviour
         // Forward force
         rb.AddForce(Vector3.forward * playerSpeed);
 
-        // Side Movement and clamping to top speed
-        rb.velocity = new Vector3(horizontal * sideSpeed, rb.velocity.y, Mathf.Clamp(rb.velocity.z, 0f, topSpeed));
+        // Side Movement Clamping to top speed
+        rb.velocity = new Vector3(sideSpeed * horizontal, rb.velocity.y, Mathf.Clamp(rb.velocity.z, 0f, topSpeed));
     }
 
     void GroundCheck()
@@ -102,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
     void PlayerArmLean()
     {   
         armTilt = Mathf.Lerp(armTilt, isGrounded?horizontal*3:horizontal, 10 * Time.deltaTime);
-        ArmHolder.transform.rotation = Quaternion.Euler(0f, 0f, armTilt * armTiltMultiplier * -1f);
+        ArmHolder.localRotation = Quaternion.Euler(0f, 0f, armTilt * armTiltMultiplier * -1f);
     }
 
     void MyInput()
