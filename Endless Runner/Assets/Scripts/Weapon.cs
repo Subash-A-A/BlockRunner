@@ -8,6 +8,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] float reloadTime = 3f;
 
+    private Animator weaponAnim;
     private bool isShooting;
     private bool isReloading;
     private bool canShoot;
@@ -16,7 +17,8 @@ public class Weapon : MonoBehaviour
     private int currentAmmo;
 
     private void Start()
-    {
+    {   
+        weaponAnim = GetComponent<Animator>();
         canShoot = true;
         canReload = true;
         currentAmmo = maxAmmo;
@@ -35,6 +37,8 @@ public class Weapon : MonoBehaviour
         {
             StartCoroutine(Reload());
         }
+
+        WeaponSlideState();
     }
 
     void Shoot()
@@ -63,14 +67,33 @@ public class Weapon : MonoBehaviour
     void FireAnimation()
     {
         anim.SetTrigger("Fire");
+        weaponAnim.SetTrigger("Shoot");
     }
     IEnumerator Reload()
     {
         canReload = false;
         canShoot = false;
+        anim.SetTrigger("Reload");
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         canReload = true;
         canShoot = true;
+    }
+
+    void WeaponSlideState()
+    {
+        if(currentAmmo == 0 || !canReload)
+        {
+            weaponAnim.SetBool("magFull", false);
+        }
+        else
+        {
+            weaponAnim.SetBool("magFull", true);
+        }
+    }
+
+    public void ReloadWeaponAnimation()
+    {
+        weaponAnim.SetTrigger("Reload");
     }
 }
