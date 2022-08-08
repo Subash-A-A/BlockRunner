@@ -3,6 +3,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Player Movement Settings")]
     [SerializeField] float topSpeed = 100f;
+    [SerializeField] float pistolTopSpeed = 60f;
     [SerializeField] float playerSpeed = 10f;
     [SerializeField] float sideSpeed = 10f;
     [SerializeField] float jumpForce = 30f;
@@ -12,24 +13,22 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     [SerializeField] Transform GroundCheckTransform;
-    [SerializeField] Transform LWallCheckTransform;
-    [SerializeField] Transform RWallCheckTransform;
     [SerializeField] Transform ArmHolder;
     [SerializeField] LayerMask WhatIsGround;
     [SerializeField] Animator anim;
 
     private Rigidbody rb;
-    
+
+    private WeaponHolder holder;
     private int jumpCount = 0;
     private float armTilt = 0f;
     private float animRunSpeed = 0f;
     private float gravityConstant = 9.14f;
     private float gravityScale = 1f;
+    private float playerCurrentTopSpeed;
 
     // Detection Variables
     public bool isGrounded;
-    private bool wallR = false;
-    private bool wallL = false;
 
     // Input Variables
     private float horizontal;
@@ -38,6 +37,9 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {   
         rb = GetComponent<Rigidbody>();
+        holder = FindObjectOfType<WeaponHolder>();
+
+        playerCurrentTopSpeed = topSpeed;
         isGrounded = true;
         rb.useGravity = false;
     }
@@ -64,14 +66,19 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(Vector3.forward * playerSpeed);
 
         // Side Movement Clamping to top speed
-        rb.velocity = new Vector3(sideSpeed * horizontal, rb.velocity.y, Mathf.Clamp(rb.velocity.z, 0f, topSpeed));
+        PlayerTopSpeedControl();
+        float velz = Mathf.Clamp(rb.velocity.z, 0f, playerCurrentTopSpeed);
+        rb.velocity = new Vector3(sideSpeed * horizontal, rb.velocity.y, velz);
+    }
+    void PlayerTopSpeedControl()
+    {
+        float top = holder.isHoldingWeapon() ? pistolTopSpeed : topSpeed;
+        playerCurrentTopSpeed = Mathf.Lerp(playerCurrentTopSpeed, top, 2 * Time.deltaTime);
     }
 
     void GroundCheck()
     {
         isGrounded = Physics.CheckSphere(GroundCheckTransform.position, 0.4f, WhatIsGround);
-        wallR = Physics.CheckSphere(RWallCheckTransform.position, 0.4f, WhatIsGround);
-        wallL = Physics.CheckSphere(LWallCheckTransform.position, 0.4f, WhatIsGround);
     }
 
     void PlayerAnimations()
@@ -130,5 +137,6 @@ public class PlayerMovement : MonoBehaviour
         // Compute a velocity that will take us to this clamped position instead.
         Vector3 neededVelocity = (positionAtEndOfStep - rb.position) / Time.deltaTime;
         rb.velocity = neededVelocity;
+
     }
 }

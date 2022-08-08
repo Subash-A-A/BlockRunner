@@ -8,6 +8,9 @@ public class Weapon : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] float reloadTime = 3f;
 
+    [SerializeField] ParticleSystem ImpactEffect;
+    [SerializeField] LayerMask TargetMask;
+
     private Animator weaponAnim;
     private bool isShooting;
     private bool isReloading;
@@ -45,8 +48,12 @@ public class Weapon : MonoBehaviour
     {
         Vector2 screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);
         Ray ray = Camera.main.ScreenPointToRay(screenCenter);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo, 200f))
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, 999f, TargetMask))
         {
+            if (hitInfo.transform.CompareTag("Enemy"))
+            {
+                Instantiate(ImpactEffect, hitInfo.point, Quaternion.identity);
+            }
             Fire();
         }
     }
@@ -61,7 +68,6 @@ public class Weapon : MonoBehaviour
     {
         FireAnimation();
         currentAmmo--;
-        Debug.Log(currentAmmo);
     }
 
     void FireAnimation()

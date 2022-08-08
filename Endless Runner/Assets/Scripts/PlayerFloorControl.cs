@@ -5,6 +5,7 @@ public class PlayerFloorControl : MonoBehaviour
     private bool rotateFloorLeft;
     private bool rotateFloorRight;
     private bool isShifting;
+    private bool isGrounded;
     private FloorParent floorParent;
     private PlayerMovement pm;
 
@@ -36,7 +37,6 @@ public class PlayerFloorControl : MonoBehaviour
     void MyInput()
     {
         isShifting = Input.GetKey(KeyCode.LeftShift);
-
         rotateFloorLeft = Input.GetKeyDown(KeyCode.Mouse0) && isShifting;
         rotateFloorRight = Input.GetKeyDown(KeyCode.Mouse1) && isShifting;
     }

@@ -4,6 +4,7 @@ public class FloorManager : MonoBehaviour
 {
     
     public GameObject[] floors;
+    public GameObject bossFloor;
 
     public GameObject SelectFloor()
     {

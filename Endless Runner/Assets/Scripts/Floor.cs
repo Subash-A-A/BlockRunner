@@ -2,14 +2,18 @@ using UnityEngine;
 
 public class Floor : MonoBehaviour
 {
+    public bool isBossTrigger = false;
+
     private Transform spawnPoint;
     private FloorManager floorManager;
     private Transform floorParent;
+
+
     private void Start()
     {
         floorParent = transform.parent;
         floorManager = FindObjectOfType<FloorManager>();
-        
+
         // Last Child will be spawn point
         spawnPoint = transform.GetChild(transform.childCount - 1);
     }
@@ -17,7 +21,7 @@ public class Floor : MonoBehaviour
     // Spawn next floor once player enters this floor
     private void OnTriggerEnter(Collider other)
     {
-        if(other.transform.tag == "Player")
+        if(other.transform.CompareTag("Player"))
         {
             SpawnFloor();
         }
