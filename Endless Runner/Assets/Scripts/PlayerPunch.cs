@@ -5,6 +5,7 @@ public class PlayerPunch : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] Transform cameraTarget;
     [SerializeField] LayerMask enemyMask;
+    [SerializeField] int punchDamage = 1;
 
     private Rigidbody rb;
 
@@ -21,6 +22,8 @@ public class PlayerPunch : MonoBehaviour
             {
                 anim.SetTrigger("Punch");
                 rb.velocity = Vector3.zero;
+                BossBehaviour boss = hitInfo.transform.gameObject.GetComponent<BossBehaviour>();
+                boss.TakeDamage(punchDamage);
             }
         }
     }

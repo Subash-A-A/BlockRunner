@@ -17,10 +17,7 @@ public class BossManager : MonoBehaviour
     {   
         InvokeRepeating(nameof(SpawnBoss), bossSpawnTimer, invokeRepeatTime);
     }
-    private void Update()
-    {
-        KillBoss();
-    }
+
     public GameObject SelectRandomBoss()
     {
         int choice = Random.Range(0, Boss.Length);
@@ -37,14 +34,11 @@ public class BossManager : MonoBehaviour
         }
     }
 
-    void KillBoss()
+    public void KillBoss()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Destroy(currentBoss);
-            isBossAlive = false;
-            StartCoroutine(BossSpawnDowntime());
-        }
+        Destroy(currentBoss);
+        isBossAlive = false;
+        StartCoroutine(BossSpawnDowntime());
     }
 
     IEnumerator BossSpawnDowntime()

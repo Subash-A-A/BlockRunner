@@ -7,6 +7,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] int maxAmmo = 9;
     [SerializeField] Animator anim;
     [SerializeField] float reloadTime = 3f;
+    [SerializeField] int weaponDamage = 1;
 
     [SerializeField] ParticleSystem ImpactEffect;
     [SerializeField] LayerMask TargetMask;
@@ -53,6 +54,8 @@ public class Weapon : MonoBehaviour
             if (hitInfo.transform.CompareTag("Enemy"))
             {
                 Instantiate(ImpactEffect, hitInfo.point, Quaternion.identity);
+                BossBehaviour boss = hitInfo.transform.gameObject.GetComponent<BossBehaviour>();
+                boss.TakeDamage(weaponDamage);
             }
             Fire();
         }
