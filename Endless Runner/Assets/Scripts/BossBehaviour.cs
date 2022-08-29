@@ -15,11 +15,13 @@ public class BossBehaviour : MonoBehaviour
     [SerializeField] Transform gatlingGunTransform;
     [SerializeField] float gunRadius = 20f;
     [SerializeField] LayerMask target;
+    [SerializeField] float aimLag = 5f;
 
     private Transform player;
     private BossManager bm;
     private Vector3 bossPos;
     private Animator anim;
+    private Vector3 gatlingAimTarget;
 
     private int currentHealth;
     private int lifeLeft;
@@ -37,6 +39,8 @@ public class BossBehaviour : MonoBehaviour
         currentHealth = maxHealth;
         lifeLeft = maxLife;
         isDisarmed = false;
+
+        gatlingAimTarget = player.position;
     }
 
     private void Update()
@@ -67,7 +71,8 @@ public class BossBehaviour : MonoBehaviour
     {
         if (Physics.CheckSphere(gatlingGunTransform.position, gunRadius, target))
         {
-            Debug.Log("Track Player");
+            gatlingAimTarget = Vector3.Lerp(gatlingAimTarget, player.position, aimLag * Time.deltaTime);
+            gatlingGunTransform.LookAt(gatlingAimTarget, Vector3.up);  
         }
     }
 
@@ -84,14 +89,12 @@ public class BossBehaviour : MonoBehaviour
         }
         else if(currentHealth <= 0)
         {
-            Debug.Log("Life Reduced");
-            currentHealth = maxHealth;
             lifeLeft -= 1;
+            currentHealth = maxHealth;
             StartCoroutine(DisarmBoss());
         }
         else
         {
-            Debug.Log("Damage Taken");
             currentHealth -= damage;
         }
     }

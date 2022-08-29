@@ -1649,6 +1649,7 @@ MonoBehaviour:
   maxAmmo: 9
   anim: {fileID: 7015975009066716960}
   reloadTime: 1.4
+  weaponDamage: 1
   ImpactEffect: {fileID: 1484664777522490400, guid: 460968f2b02facf4d9030cf06c0abb01, type: 3}
   TargetMask:
     serializedVersion: 2
@@ -2216,6 +2217,7 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 512
+  punchDamage: 7
 --- !u!1 &7015975009412938702
 GameObject:
   m_ObjectHideFlags: 0

@@ -25,8 +25,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1935683369533440078}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.19}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.20000006}
   m_LocalScale: {x: 0.2125, y: 0.5125, z: 1}
   m_Children: []
   m_Father: {fileID: 4421991594619086923}
@@ -219,7 +219,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5708493326416282388}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.13, z: -3.25}
+  m_LocalPosition: {x: 0, y: 2.13, z: -3.2}
   m_LocalScale: {x: 7.2000003, y: 1.5, z: 3}
   m_Children: []
   m_Father: {fileID: 6395902681380760612}
@@ -368,12 +368,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnOffset: 60
   positionLag: 2
+  maxHealth: 6
+  maxLife: 5
+  bossDisarmDuration: 5
   hasGatlingGun: 1
   gatlingGunTransform: {fileID: 6358130710041456342}
-  gunRadius: 30
+  gunRadius: 75
   target:
     serializedVersion: 2
     m_Bits: 256
+  aimLag: 5
+  isDisarmed: 0
 --- !u!95 &3642496376793830919
 Animator:
   serializedVersion: 3
