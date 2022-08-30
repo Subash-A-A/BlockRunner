@@ -23,7 +23,7 @@ public class PlayerPunch : MonoBehaviour
                 anim.SetTrigger("Punch");
                 rb.velocity = Vector3.zero;
                 BossBehaviour boss = hitInfo.transform.gameObject.GetComponent<BossBehaviour>();
-                boss.TakeDamage(punchDamage);
+                boss.TakeDamage(punchDamage, true);
             }
         }
     }

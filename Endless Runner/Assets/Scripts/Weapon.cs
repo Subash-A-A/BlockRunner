@@ -55,7 +55,7 @@ public class Weapon : MonoBehaviour
             {
                 Instantiate(ImpactEffect, hitInfo.point, Quaternion.identity);
                 BossBehaviour boss = hitInfo.transform.gameObject.GetComponent<BossBehaviour>();
-                boss.TakeDamage(weaponDamage);
+                boss.TakeDamage(weaponDamage, false);
             }
             Fire();
         }

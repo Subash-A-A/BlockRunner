@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BossBehaviour : MonoBehaviour
 {
@@ -13,20 +15,32 @@ public class BossBehaviour : MonoBehaviour
     [Header("Gatling Gun")]
     [SerializeField] bool hasGatlingGun;
     [SerializeField] Transform gatlingGunTransform;
+    [SerializeField] float targetLockDuration = 2f;
     [SerializeField] float gunRadius = 20f;
     [SerializeField] LayerMask target;
     [SerializeField] float aimLag = 5f;
+    [SerializeField] int gunDamage = 50;
+
+    [Header("Health Bar UI")]
+    [SerializeField] Image healthBar;
+    [SerializeField] GameObject lifePrefab;
+    [SerializeField] Transform lifePanel;
+
+    [HideInInspector]
+    public bool isDisarmed = false;
 
     private Transform player;
     private BossManager bm;
     private Vector3 bossPos;
     private Animator anim;
     private Vector3 gatlingAimTarget;
+    private LineRenderer lr;
 
     private int currentHealth;
     private int lifeLeft;
 
-    public bool isDisarmed = false;
+    private bool isPlayerTracked;
+    private float currentLockDuration;
 
 
     private void Start()
@@ -35,17 +49,25 @@ public class BossBehaviour : MonoBehaviour
         SetPlayerTransform(bm.Player);
 
         anim = GetComponent<Animator>();
+        lr = GetComponent<LineRenderer>();
 
         currentHealth = maxHealth;
         lifeLeft = maxLife;
         isDisarmed = false;
 
         gatlingAimTarget = player.position;
+        healthBar.fillAmount = 1f;
+
+        for(int i = 0; i < maxLife; i++)
+        {
+            Instantiate(lifePrefab, lifePanel);
+        }
     }
 
     private void Update()
     {
         BossPositionLerper();
+        HealthLerper();
 
         anim.SetBool("loadWeapon", !isDisarmed);
 
@@ -69,34 +91,80 @@ public class BossBehaviour : MonoBehaviour
     
     void GatlingGun()
     {
-        if (Physics.CheckSphere(gatlingGunTransform.position, gunRadius, target))
+        GatlingLock();
+        if (Physics.CheckSphere(gatlingGunTransform.position, gunRadius, target) && !isDisarmed)
         {
+            lr.enabled = true;
             gatlingAimTarget = Vector3.Lerp(gatlingAimTarget, player.position, aimLag * Time.deltaTime);
-            gatlingGunTransform.LookAt(gatlingAimTarget, Vector3.up);  
-        }
-    }
+            gatlingAimTarget.z = player.position.z;
 
-    public void TakeDamage(int damage)
-    {
-        
-        if(lifeLeft == 0)
-        {
-            bm.KillBoss();
-        }
-        else if (isDisarmed)
-        {
-            Debug.Log("Immune");
-        }
-        else if(currentHealth <= 0)
-        {
-            lifeLeft -= 1;
-            currentHealth = maxHealth;
-            StartCoroutine(DisarmBoss());
+            gatlingGunTransform.LookAt(gatlingAimTarget, Vector3.up);
+
+            lr.SetPosition(0, gatlingGunTransform.position);
+            lr.SetPosition(1, gatlingAimTarget);
         }
         else
         {
-            currentHealth -= damage;
+            lr.enabled = false;
         }
+    }
+
+    void GatlingLock()
+    {
+        isPlayerTracked = Physics.Raycast(gatlingGunTransform.position, gatlingGunTransform.forward, gunRadius, target);
+
+        if(currentLockDuration >= targetLockDuration)
+        {
+            Shoot();
+        }
+
+        if (isPlayerTracked)
+        {
+            currentLockDuration += Time.deltaTime;
+        }
+        else
+        {
+            currentLockDuration -= Time.deltaTime;
+        }
+
+        currentLockDuration = Mathf.Clamp(currentLockDuration, 0f, targetLockDuration);
+    }
+
+    void Shoot()
+    {
+        player.gameObject.GetComponent<Health>().TakeDamage(gunDamage);
+        currentLockDuration = 0f;
+    }
+
+    public void TakeDamage(int damage, bool gotPunched)
+    {   
+        if(!isDisarmed || gotPunched)
+        {
+            if (currentHealth > 0)
+            {
+                currentHealth -= damage;
+            }
+            if (currentHealth <= 0)
+            {
+                lifeLeft -= 1;
+                Destroy(lifePanel.GetChild(0).gameObject);
+                currentHealth = maxHealth;
+                StartCoroutine(DisarmBoss());
+            }
+            if (lifeLeft == 0)
+            {
+                bm.KillBoss();
+            }
+        }
+        else
+        {
+            Debug.Log("Immune");
+        }
+    }
+
+    void HealthLerper()
+    {
+        healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, (float)currentHealth / maxHealth, 10 * Time.deltaTime);
     }
 
     IEnumerator DisarmBoss()
