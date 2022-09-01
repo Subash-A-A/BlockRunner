@@ -85,8 +85,8 @@ public class Weapon : MonoBehaviour
         anim.SetTrigger("Reload");
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
-        canReload = true;
         canShoot = true;
+        canReload = true;
     }
 
     void WeaponSlideState()
