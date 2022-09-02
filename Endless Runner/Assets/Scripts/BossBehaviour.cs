@@ -41,7 +41,7 @@ public class BossBehaviour : MonoBehaviour
 
     private bool isPlayerTracked;
     private float currentLockDuration;
-
+    private Health playerHealth;
 
     private void Start()
     {
@@ -50,6 +50,7 @@ public class BossBehaviour : MonoBehaviour
 
         anim = GetComponent<Animator>();
         lr = GetComponent<LineRenderer>();
+        playerHealth = player.gameObject.GetComponent<Health>();
 
         currentHealth = maxHealth;
         lifeLeft = maxLife;
@@ -128,11 +129,12 @@ public class BossBehaviour : MonoBehaviour
         }
 
         currentLockDuration = Mathf.Clamp(currentLockDuration, 0f, targetLockDuration);
+        playerHealth.SetTargetAlert(currentLockDuration / targetLockDuration);
     }
 
     void Shoot()
     {
-        player.gameObject.GetComponent<Health>().TakeDamage(gunDamage);
+        playerHealth.TakeDamage(gunDamage);
         currentLockDuration = 0f;
     }
 

@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform ArmHolder;
     [SerializeField] LayerMask WhatIsGround;
     [SerializeField] Animator anim;
+    [SerializeField] Animator legAnim;
 
     private Rigidbody rb;
 
@@ -89,7 +90,9 @@ public class PlayerMovement : MonoBehaviour
         // Walk Run Blend
         animRunSpeed = rb.velocity.z / 100f;
         animRunSpeed = Mathf.Clamp(animRunSpeed, 0f, 1f);
+
         anim.SetFloat("velZ", animRunSpeed);
+        legAnim.SetFloat("velZ", animRunSpeed);
     }
 
     void Jump()
@@ -137,6 +140,13 @@ public class PlayerMovement : MonoBehaviour
         // Compute a velocity that will take us to this clamped position instead.
         Vector3 neededVelocity = (positionAtEndOfStep - rb.position) / Time.deltaTime;
         rb.velocity = neededVelocity;
+    }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.transform.CompareTag("Obstacle"))
+        {
+            Debug.Log("Crash Damage = " + (((rb.velocity + rb.velocity * Time.deltaTime)/topSpeed) * 100f));
+        }
     }
 }
