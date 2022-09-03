@@ -19,7 +19,7 @@ public class BossBehaviour : MonoBehaviour
     [SerializeField] float gunRadius = 20f;
     [SerializeField] LayerMask target;
     [SerializeField] float aimLag = 5f;
-    [SerializeField] int gunDamage = 50;
+    [SerializeField] float gunDamage = 50;
 
     [Header("Health Bar UI")]
     [SerializeField] Image healthBar;

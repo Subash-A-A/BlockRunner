@@ -25,7 +25,7 @@ public class Health : MonoBehaviour
         HealthLerper();
         AlertBar();
     }
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if(currentHealth > 0)
         {   

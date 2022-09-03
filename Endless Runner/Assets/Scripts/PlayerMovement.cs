@@ -19,8 +19,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Animator legAnim;
 
     private Rigidbody rb;
-
     private WeaponHolder holder;
+    private Health playerHealth;
+
     private int jumpCount = 0;
     private float armTilt = 0f;
     private float animRunSpeed = 0f;
@@ -34,11 +35,13 @@ public class PlayerMovement : MonoBehaviour
     // Input Variables
     private float horizontal;
     private bool isJumping;
+    private float prevZVel;
 
     private void Start()
     {   
         rb = GetComponent<Rigidbody>();
         holder = FindObjectOfType<WeaponHolder>();
+        playerHealth = GetComponent<Health>();
 
         playerCurrentTopSpeed = topSpeed;
         isGrounded = true;
@@ -54,11 +57,24 @@ public class PlayerMovement : MonoBehaviour
         PlayerArmLean();
     }
 
+    private void LateUpdate()
+    {
+        prevZVel = rb.velocity.z;
+    }
+
     private void FixedUpdate()
     {
         Move();
         Gravity();
         XPosClamper();
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Obstacle"))
+        {
+            float crashDamage = (prevZVel / topSpeed) * 100;
+            playerHealth.TakeDamage(crashDamage);
+        }
     }
 
     void Move()
@@ -142,11 +158,4 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = neededVelocity;
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.transform.CompareTag("Obstacle"))
-        {
-            Debug.Log("Crash Damage = " + (((rb.velocity + rb.velocity * Time.deltaTime)/topSpeed) * 100f));
-        }
-    }
 }
