@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Collections.Generic;
 
 public class BossBehaviour : MonoBehaviour
 {
@@ -11,6 +10,11 @@ public class BossBehaviour : MonoBehaviour
     [SerializeField] int maxHealth = 6;
     [SerializeField] int maxLife = 5;
     [SerializeField] float bossDisarmDuration = 5f;
+
+    [Header("Shield")]
+    [SerializeField] Material disarmShield;
+    [SerializeField] Color shiedEnable;
+    [SerializeField] Color shiedDisable;
 
     [Header("Gatling Gun")]
     [SerializeField] bool hasGatlingGun;
@@ -54,7 +58,9 @@ public class BossBehaviour : MonoBehaviour
 
         currentHealth = maxHealth;
         lifeLeft = maxLife;
+        
         isDisarmed = false;
+        disarmShield.color = shiedDisable;
 
         gatlingAimTarget = player.position;
         healthBar.fillAmount = 1f;
@@ -69,6 +75,7 @@ public class BossBehaviour : MonoBehaviour
     {
         BossPositionLerper();
         HealthLerper();
+        DisarmShield();
 
         anim.SetBool("loadWeapon", !isDisarmed);
 
@@ -88,6 +95,18 @@ public class BossBehaviour : MonoBehaviour
     void SetPlayerTransform(Transform transform)
     {
         player = transform;
+    }
+
+    void DisarmShield()
+    {
+        if (isDisarmed)
+        {
+            disarmShield.color = Color.Lerp(disarmShield.color, shiedEnable, 10 * Time.deltaTime);
+        }
+        else
+        {
+            disarmShield.color = Color.Lerp(disarmShield.color, shiedDisable, 10 * Time.deltaTime);
+        }
     }
     
     void GatlingGun()
