@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BossBehaviour : MonoBehaviour
 {
     [Header("Boss Parameters")]
     [SerializeField] float spawnOffset = 60f;
     [SerializeField] float positionLag = 2f;
+    [SerializeField] float disarmPositionLag = 1.5f;
     [SerializeField] int maxHealth = 6;
     [SerializeField] int maxLife = 5;
     [SerializeField] float bossDisarmDuration = 5f;
@@ -16,8 +18,15 @@ public class BossBehaviour : MonoBehaviour
     [SerializeField] Color shiedEnable;
     [SerializeField] Color shiedDisable;
 
-    [Header("Gatling Gun")]
+    [Header("Bombers")]
+    [SerializeField] List<Bomber> Bombers;
+    [SerializeField] int numberOfBombs = 3;
+
+    [Header("Boss Equipments")]
     [SerializeField] bool hasGatlingGun;
+    [SerializeField] bool hasBomber;
+
+    [Header("Gatling Gun")]
     [SerializeField] Transform gatlingGunTransform;
     [SerializeField] float targetLockDuration = 2f;
     [SerializeField] float gunRadius = 20f;
@@ -47,6 +56,8 @@ public class BossBehaviour : MonoBehaviour
     private float currentLockDuration;
     private Health playerHealth;
 
+    private bool canBomb;
+
     private void Start()
     {
         bm = FindObjectOfType<BossManager>();
@@ -69,6 +80,17 @@ public class BossBehaviour : MonoBehaviour
         {
             Instantiate(lifePrefab, lifePanel);
         }
+
+        canBomb = true;
+
+        if (!hasGatlingGun)
+        {
+            gatlingGunTransform = null;
+        }
+        if (!hasBomber)
+        {
+            Bombers = null;
+        }
     }
 
     private void Update()
@@ -83,11 +105,16 @@ public class BossBehaviour : MonoBehaviour
         {
             GatlingGun();
         }
+
+        if(canBomb && hasBomber)
+        {
+            StartCoroutine(SpawnBombs());
+        }
     }
 
     void BossPositionLerper()
     {
-        float lag = (isDisarmed) ? positionLag - 0.5f : positionLag;
+        float lag = (isDisarmed) ? disarmPositionLag : positionLag;
         bossPos = new Vector3(0f, 12f, player.position.z + spawnOffset);
         transform.position = Vector3.Lerp(transform.position, bossPos, lag * Time.deltaTime);
     }
@@ -151,6 +178,22 @@ public class BossBehaviour : MonoBehaviour
         playerHealth.SetTargetAlert(currentLockDuration / targetLockDuration);
     }
 
+    IEnumerator SpawnBombs()
+    {
+        if (!isDisarmed)
+        {
+            canBomb = false;
+            int bomberIndex = Random.Range(0, Bombers.Count);
+
+            for (int i = 0; i < numberOfBombs; i++)
+            {
+                Bombers[bomberIndex].SpawnBomb();
+                bomberIndex = (bomberIndex + 1) % Bombers.Count;
+            }
+            yield return new WaitForSeconds(5f);
+            canBomb = true;
+        }
+    }
     void Shoot()
     {
         playerHealth.TakeDamage(gunDamage);

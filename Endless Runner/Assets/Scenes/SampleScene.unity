@@ -1530,6 +1530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Boss:
   - {fileID: 6395902681380761050, guid: 1e1adc30fe485cf4688ca9f3e34d7361, type: 3}
+  - {fileID: 6395902681380761050, guid: 1da11d28f69bd254eb8f1a5932ae8711, type: 3}
   Player: {fileID: 7015975009267181162}
   bossSpawnTimer: 5
   invokeRepeatTime: 5
