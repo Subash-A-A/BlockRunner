@@ -5,10 +5,8 @@ public class PlayerFloorControl : MonoBehaviour
     private bool rotateFloorLeft;
     private bool rotateFloorRight;
     private bool isShifting;
-    private bool isGrounded;
     private FloorParent floorParent;
     private PlayerMovement pm;
-
 
     private void Start()
     {

@@ -4,6 +4,9 @@ using System.Collections;
 public class FloorParent : MonoBehaviour
 {
     public bool canRotate = true;
+
+    [SerializeField] float rotateSpeed = 5f;
+
     private float currentRotation = 0f;
     private float smoothRotation = 0f;
     private void Start()
@@ -27,7 +30,7 @@ public class FloorParent : MonoBehaviour
 
     void LerpScaleRotation()
     {
-        smoothRotation = Mathf.Lerp(smoothRotation, currentRotation, 5 * Time.deltaTime);
+        smoothRotation = Mathf.Lerp(smoothRotation, currentRotation, rotateSpeed * Time.deltaTime);
         transform.localRotation = Quaternion.Euler(0f, 0f, smoothRotation);
     }
 }
