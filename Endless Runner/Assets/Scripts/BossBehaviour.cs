@@ -21,6 +21,7 @@ public class BossBehaviour : MonoBehaviour
     [Header("Bombers")]
     [SerializeField] List<Bomber> Bombers;
     [SerializeField] int numberOfBombs = 3;
+    [SerializeField] float nextBombDelay = 5f;
 
     [Header("Boss Equipments")]
     [SerializeField] bool hasGatlingGun;
@@ -190,7 +191,7 @@ public class BossBehaviour : MonoBehaviour
                 Bombers[bomberIndex].SpawnBomb();
                 bomberIndex = (bomberIndex + 1) % Bombers.Count;
             }
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(nextBombDelay);
             canBomb = true;
         }
     }
